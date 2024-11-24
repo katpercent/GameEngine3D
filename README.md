@@ -30,6 +30,7 @@ And many more...
 3. GameEngine3D Windows RTX CUDA
 
 (I don't think i will continue the python version due to performance issue)
+I will merge all versions of the project.
 
 ## Acronyms
 
