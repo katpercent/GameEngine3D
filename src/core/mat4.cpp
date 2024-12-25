@@ -1,5 +1,5 @@
-#include "../../include/module/mat4.hpp"
-#include "../../include/module/vec4.hpp"
+#include "../../include/core/mat4.hpp"
+#include "../../include/core/vec4.hpp"
 
 vec4 mat4::operator*(const vec4& vec) const {
     // Perform matrix-vector multiplication (result = matrix * vector)

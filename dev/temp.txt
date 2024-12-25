@@ -1,4 +1,4 @@
-cd ../build/
+in build folder :
 cmake -S ../config -B .
 make
 ./main

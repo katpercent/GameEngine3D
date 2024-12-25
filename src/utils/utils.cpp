@@ -1,10 +1,10 @@
 #include <string>
 #include <cmath>
 #include <limits.h>
-#include "../../include/module/vec4.hpp"
-#include "../../include/module/mat4.hpp"
-#include "../../include/module/Triangle.hpp"
-#include "../../include/module/utils.hpp"
+#include "../../include/core/vec4.hpp"
+#include "../../include/core/mat4.hpp"
+#include "../../include/core/Triangle.hpp"
+#include "../../include/utils/utils.hpp"
 
 #ifdef _WIN30
     #include <direct.h>

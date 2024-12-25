@@ -1,5 +1,6 @@
-#include "../../include/module/vec4.hpp"
+#include "../../include/core/vec4.hpp"
 #include <cmath>
+#include <stdexcept>
 
 // Default constructor
 vec4::vec4() : x(0.0), y(0.0), z(0.0), w(1.0) {}
@@ -19,13 +20,18 @@ vec4 vec4::operator-(const vec4& other) const {
     return vec4(x - other.x, y - other.y, z - other.z, w);
 }
 
+vec4 vec4::operator-() const {
+    return vec4(-x, -y, -z, w); // Inverse x, y, z, mais garde w inchangé
+}
+
 vec4 vec4::operator*(float scalar) const {
     return vec4(x * scalar, y * scalar, z * scalar, w);
 }
 
 vec4 vec4::operator/(float scalar) const {
     if (std::abs(scalar) < std::numeric_limits<float>::epsilon()) {
-        std::cout << "Division by zero or near-zero scalar!";
+        //throw std::invalid_argument("Division by zero or near-zero scalar!");
+        return *this;
     }
     return vec4(x / scalar, y / scalar, z / scalar, w);
 }
@@ -55,7 +61,9 @@ float vec4::magnitude() const {
 vec4 vec4::normalize() const {
     float mag = magnitude();
     if (mag == 0) {
-        std::cout << "Cannot normalize a zero-length vector!";
+        //throw std::invalid_argument("Cannot normalize a zero-length vector!");
+        return *this;
+        
     }
     return *this / mag;
 }
@@ -68,11 +76,6 @@ vec4 vec4::crossProduct(const vec4& other) const {
     
     // The w component is not affected by the cross product
     return vec4(crossX, crossY, crossZ, w);
-}
-
-// Opposite (negate the vector)
-vec4 vec4::opposite() const {
-    return vec4(-x, -y, -z, w);
 }
 
 // Swizzling methods (optional)

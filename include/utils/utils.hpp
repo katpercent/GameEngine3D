@@ -2,9 +2,9 @@
 #define UTILS_HPP
 
 #include <string>
-#include "vec4.hpp"
-#include "Triangle.hpp"
-#include "mat4.hpp"
+#include "../core/vec4.hpp"
+#include "../core/Triangle.hpp"
+#include "../core/mat4.hpp"
 
 std::string getCurrentDirectory();
 int maxValue(int, int);

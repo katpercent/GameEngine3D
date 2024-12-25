@@ -7,26 +7,26 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <cmath>
-#include "../include/module/vec4.hpp"
-#include "../include/module/mat4.hpp"
-#include "../include/module/Triangle.hpp"
-#include "../include/module/Mesh.hpp"
-#include "../include/module/Meshes.hpp"
-#include "../include/module/utils.hpp"
+#include "../include/core/vec4.hpp"
+#include "../include/core/mat4.hpp"
+#include "../include/core/Triangle.hpp"
+#include "../include/core/Mesh.hpp"
+#include "../include/core/Meshes.hpp"
+#include "../include/utils/utils.hpp"
 
-vec4 soleil(vec4& vec, double& time)
+const float PI = 3.1415926535f;
+
+vec4 center_of_gravity(triangle triangleViewed)
 {
-    float radians = timeToRadians(time);
-    mat4 matRot = MatrixRotationZ(radians);
-    return matRot * vec;
+    vec4 first_center = (triangleViewed.p[0] + triangleViewed.p[1])/2;
+    vec4 G = (first_center + triangleViewed.p[2])/2;
+    return G;
 }
 
-
-int main(int argc, char* argv[])
+int main()
 {
     SDL_Window* win = NULL;
     SDL_Renderer* renderer = NULL;
-    SDL_Texture* img = NULL;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
         return 1;
@@ -36,12 +36,10 @@ int main(int argc, char* argv[])
     int ScreenSizeX = DM.w - 100;
     int ScreenSizeY = DM.h - 100;
     
-    vec4 lightPos = { 0.0f, 0.0f, 0.0f, 1.0f};
-    int StartHour = 6;
-    int TickRate = 10;
+    
     float Velocity = 0.4;
     float VelocityCam = 0.2;
-    float FovRad = 1.0f / tanf(90.0f * 0.5f * 3.1415926535f / 180.0f);
+    float FovRad = 1/tan(90.0f * 0.5f * (3.1415926535f / 180.0f));
     float Far = 1000.0f;
     float Near = 0.1f;
     float AspectRatio = static_cast<float>(ScreenSizeX) / static_cast<float>(ScreenSizeY);
@@ -49,11 +47,11 @@ int main(int argc, char* argv[])
     float Yaw = 0.0f;
     float elapsedTime = 0.0f;
     
-    vec4 vCamera(0.0, 0.0, 0.0, 1.0);
-    vec4 vLookSi(1.0, 0.0, 0.0, 1.0);
-    vec4 vLookFor(0.0, 0.0, 1.0, 1.0); 
-    vec4 vSide(0.0, 0.0, 0.0, 1.0); 
-    vec4 vFor(0.0, 0.0, 0.0, 1.0);
+    vec4 vCamera(0.0, 0.0, 0.0);
+    vec4 vLookSi(1.0, 0.0, 0.0);
+    vec4 vLookFor(0.0, 0.0, 1.0); 
+    vec4 vSide(0.0, 0.0, 0.0); 
+    vec4 vFor(0.0, 0.0, 0.0);
 
     mat4 MatrixProjection;
     MatrixProjection.m[0][0] = AspectRatio * FovRad;
@@ -63,8 +61,11 @@ int main(int argc, char* argv[])
     MatrixProjection.m[3][2] = 1.0f;
     
     std::string path = getCurrentDirectory();
-    Meshes meshes({ path + "/obj/mountains.obj", path + "/obj/Wall.ob" },  { vec4({0.0f, -20.0f, 0.0f, 1.0f}), vec4({0.0f, 0.0f, 20.0f, 0.02f}) }, { vec4({0.0f, 0.0f, 0.0f, 0.0f}), vec4({3.1415926535f / 2.0f, 2.0f * 3.1415926535f / 2.0f, 0.0f, 0.0f}) }) ;
     
+    Meshes meshes({ path + "/obj/mountains.obj", path + "/obj/VideoShip.obj",path + "/obj/Wall.obj" },  
+                  { vec4({0.0f, -20.0f, 0.0f, 1.0f}), vec4({0.0f, 0.0f, 0.0f, 0.2f}), vec4({0.0f, 0.0f, 20.0f, 0.02f}) },
+                  { vec4({0.0f, 0.0f, 0.0f, 0.0f}), vec4({0.0f, 0.0f, 0.0f, 0.0f}), vec4({PI / 2.0f, 2.0f * PI / 2.0f, 0.0f, 0.0f}) }) ;
+
     TTF_Font* Sans = TTF_OpenFont("Sans.ttf", 24);
     win = SDL_CreateWindow("Game Engine 3D", 100, 100, ScreenSizeX, ScreenSizeY, SDL_WINDOW_SHOWN); // | SDL_WINDOW_FULLSCREEN_DESKTOP
     renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED); //  | SDL_RENDERER_PRESENTVSYNC
@@ -114,7 +115,7 @@ int main(int argc, char* argv[])
         mat4 matWorld;
         matWorld.MatrixMakeIdentity();
         matWorld = matRotZ * matRotX;
-        //matWorld = MatrixMultiplyMatrix(matWorld, matRotY);
+        matWorld = matWorld * matRotY;
 
         vec4 vUp( 0.0, 1.0, 0.0, 1.0 );
         vec4 vTargetZ( 0.0, 0.0, 1.0, 1.0 );
@@ -125,13 +126,18 @@ int main(int argc, char* argv[])
         vLookSi = matCameraRot * vTargetX;
         vTargetZ = vCamera + vLookFor;
         mat4 matView = MatrixPointAt(vCamera, vTargetZ, vUp);
-
+        
         std::vector<triangle> vecTrianglesToSort;
         for (auto& mesh : meshes.meshes)
         {
             mat4 matMeshRotX = MatrixRotationX(mesh.rot.x);
             mat4 matMeshRotY = MatrixRotationY(mesh.rot.y);
             mat4 matMeshRotZ = MatrixRotationZ(mesh.rot.z);
+
+            // =========================
+            // Begin Triangles Processing
+            // =========================
+
             for (auto& tri : mesh.tris)
             {
                 triangle triProjected, triViewed, triTranslated, triTransformed, triRotatedX, triRotatedXY, triRotatedXYZ;
@@ -148,50 +154,43 @@ int main(int argc, char* argv[])
                 triTransformed.p[2] = matWorld * triRotatedXYZ.p[2];
 
                 for (int i = 0; i < 3; i++) {
-                    triTranslated.p[i].x = triTransformed.p[i].x + mesh.coo.x;
-                    triTranslated.p[i].y = triTransformed.p[i].y + mesh.coo.y;
-                    triTranslated.p[i].z = triTransformed.p[i].z + mesh.coo.z;
+                    triTranslated.p[i] = triTransformed.p[i] + mesh.coo;
                 }
 
                 vec4 line1 = triTranslated.p[1] - triTranslated.p[0];
                 vec4 line2 = triTranslated.p[2] - triTranslated.p[0];
-
-                // It's normally normal to normalise the normal
+                
                 vec4 normal = line1.crossProduct(line2);
                 normal.normalize();
 
                 vec4 vCameraRay = triTranslated.p[0] - vCamera;
-
+                
                 //if (normal.coo[2] < 0)
                 if (normal.dot(vCameraRay) < 0.0f)
                 {
-                    /*for (int i = 0; i < 3; i++)
-                    {
-                        
-                        vec4 lightDir = lightPos - triProjected.p[i]; // Assuming lightPos is the position of the light source
-                        lightDir.normalize();
-                        vec4 viewDir = vCamera - triProjected.p[i]; // Assuming cameraPos is the position of the camera
-                        viewDir.normalize();
-
-                        // Calculate Phong lighting
-                        //vec4& normal, vec4& lightDir, vec4& viewDir, float ambientStrength, float diffuseStrength, float specularStrength, float shininess
-                        vec4 lightColor(1.0f, 0.0f, 0.0f, 0.0f);
-                        //triTranslated.col[i] = Gouraud(normal, lightDir, lightColor);
-                        //triTranslated.col[i] = orenNayar(normal, lightDir, viewDir, 0.0f); // Adjust the parameters as needed
-                        //triTranslated.col[i] = PhongLighting(lightColor, normal, lightDir, viewDir, 0.7f, 0.6f, 0.5f, 256.0f); // Adjust the parameters as needed
-                    }*/
-
-                    // Convert World Space-- > View Space
+                    // Convert World Space --> View Space
                     triViewed.p[0] = matView * triTranslated.p[0];
                     triViewed.p[1] = matView * triTranslated.p[1];
                     triViewed.p[2] = matView * triTranslated.p[2];
 
+                    // =========================
+                    // Illumination
+                    // =========================
+                    
+                    vec4 col(255, 255, 255, 255);
+                    for (int i = 0; i < 3; i++) {
+                         triViewed.col[i] = col;
+                    }
+                    
+                    // =========================
+                    // Clip Triangles against the edge of the screen (frustrum clipping)
+                    // =========================
+
                     int nClippedTriangles = 0;
                     triangle clipped[2];
+                    
                     nClippedTriangles = Triangle_ClipAgainstPlane(vec4(0.0f, 0.0f, 0.1f, 1.0f), vec4(0.0f, 0.0f, 1.0f, 1.0f), triViewed, clipped[0], clipped[1]);
 
-                    // We may end up with multiple triangles form the clip, so project as
-                    // required
                     for (int n = 0; n < nClippedTriangles; n++)
                     {
                         // Project triangles from 3D --> 2D
@@ -222,11 +221,12 @@ int main(int argc, char* argv[])
                         triProjected.p[1].y *= 0.5f * ScreenSizeY;
                         triProjected.p[2].x *= 0.5f * ScreenSizeX;
                         triProjected.p[2].y *= 0.5f * ScreenSizeY;
+
                         for (int x = 0; x < 3; x++)
                         {
-                            //triProjected.col[x] = triTranslated.col[x];
-                            triProjected.col[x] = SDL_Color({ 255, 255, 255 });
+                            triProjected.col[x] = triViewed.col[x];
                         }
+
                         // Store triangle for sorting
                         vecTrianglesToSort.push_back(triProjected);
                     }
@@ -244,19 +244,17 @@ int main(int argc, char* argv[])
         });
 
         // Clip triangles against all four screen edges
-        int triDraw = 0;
-        // Clip triangles against all four screen edges
         for (auto& tri : vecTrianglesToSort) {
             std::vector<triangle> clippedTriangles = { tri };
             std::vector<triangle> trianglesToAdd;
 
-            for (int plane = 0; plane < 4; ++plane) {
+            for (int edge = 0; edge < 4; ++edge) {
                 trianglesToAdd.clear();
                 for (auto& t : clippedTriangles) {
                     int nClippedTriangles;
                     triangle clipped[2]; // To store up to 2 clipped triangles
 
-                    switch (plane) {
+                    switch (edge) {
                     case 0: // Clip against left edge
                         nClippedTriangles = Triangle_ClipAgainstPlane(vec4(0.0f, 0.0f, 0.0f, 1.0f), vec4( 1.0f, 0.0f, 0.0f, 1.0f ), t, clipped[0], clipped[1]);
                         break;
@@ -283,9 +281,21 @@ int main(int argc, char* argv[])
         {
             const std::vector<SDL_Vertex> verts =
             {
-                { SDL_FPoint{ triProjected.p[0].x, triProjected.p[0].y }, triProjected.col[0], SDL_FPoint{0} },
-                { SDL_FPoint{ triProjected.p[1].x, triProjected.p[1].y }, triProjected.col[1], SDL_FPoint{0} },
-                { SDL_FPoint{ triProjected.p[2].x, triProjected.p[2].y }, triProjected.col[2], SDL_FPoint{0} },
+                { SDL_FPoint{ triProjected.p[0].x, triProjected.p[0].y }, \
+                  SDL_Color{static_cast<Uint8>(triProjected.col[0].x),
+                            static_cast<Uint8>(triProjected.col[0].x),
+                            static_cast<Uint8>(triProjected.col[0].z),
+                            static_cast<Uint8>(triProjected.col[0].w) }, SDL_FPoint{0} },
+                { SDL_FPoint{ triProjected.p[1].x, triProjected.p[1].y }, 
+                  SDL_Color{static_cast<Uint8>(triProjected.col[1].x),
+                            static_cast<Uint8>(triProjected.col[1].x),
+                            static_cast<Uint8>(triProjected.col[1].z),
+                            static_cast<Uint8>(triProjected.col[1].w) }, SDL_FPoint{0} },
+                { SDL_FPoint{ triProjected.p[2].x, triProjected.p[2].y }, 
+                  SDL_Color{static_cast<Uint8>(triProjected.col[2].x),
+                            static_cast<Uint8>(triProjected.col[2].x),
+                            static_cast<Uint8>(triProjected.col[2].z),
+                            static_cast<Uint8>(triProjected.col[2].w) }, SDL_FPoint{0} },
             };
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderDrawLine(renderer, triProjected.p[0].x, triProjected.p[0].y, triProjected.p[1].x, triProjected.p[1].y);
@@ -303,6 +313,7 @@ int main(int argc, char* argv[])
             fps = frameCount / (elapsedTime / 1000.0f);
             frameCount = 0;
             startTime = frameEnd;
+            // Info in the title of the window
             std::string title = "GameEngine {Info : {FPS: " + std::to_string(fps) + ", Number of Triangles: " + std::to_string(numVert) + "}}";
             SDL_SetWindowTitle(win, title.c_str());
         }

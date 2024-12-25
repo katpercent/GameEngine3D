@@ -1,7 +1,6 @@
 #ifndef MAT4_HPP
 #define MAT4_HPP
 
-#pragma once
 #include "vec4.hpp"
 
 class mat4 {

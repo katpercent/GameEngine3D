@@ -1,12 +1,13 @@
 
-#include "../../include/module/Meshes.hpp"
+#include "../../include/core/Meshes.hpp"
+#include <cstddef>
 
 Meshes::Meshes(std::vector<std::string> mesh, std::vector<vec4> MeshCoo, std::vector<vec4> MeshRot) {
     this->mesh = mesh;
     this->MeshCoo = MeshCoo;
     this->MeshRot = MeshRot;
 
-    for (int m = 0; m < (this->mesh.size()); m++)
+    for (size_t m = 0; m < (this->mesh.size()); m++)
     {
 
         class Mesh NewMesh;

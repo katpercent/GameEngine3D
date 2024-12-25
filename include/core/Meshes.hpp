@@ -1,6 +1,6 @@
 #ifndef MESHES_HPP
 #define MESHES_HPP
-#pragma once
+
 #include "Mesh.hpp"
 #include "vec4.hpp"
 

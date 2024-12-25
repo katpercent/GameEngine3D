@@ -1,7 +1,6 @@
 #ifndef VEC4_HPP
 #define VEC4_HPP
 
-#pragma once
 #include <iostream>
 
 class vec4 {
@@ -12,11 +11,8 @@ public:
     // Default constructor
     vec4();
 
-    // Constructor for x, y, z
-    vec4(float x, float y, float z);
-
     // Constructor for x, y, z, w
-    vec4(float x, float y, float z, float w);
+    vec4(float x, float y, float z, float w = 1.0f);
 
     // Copy constructor
     vec4(const vec4& other);
@@ -34,6 +30,7 @@ public:
     // Overloaded operators
     vec4 operator+(const vec4& other) const;
     vec4 operator-(const vec4& other) const;
+    vec4 operator-() const;
     vec4 operator*(float scalar) const;
     vec4 operator/(float scalar) const;
     vec4 operator*(const vec4& other) const;
@@ -55,10 +52,7 @@ public:
     // Cross product (3D) - defined using the first three components (x, y, z)
     vec4 crossProduct(const vec4& other) const;
 
-    // Opposite (negate the vector)
-    vec4 opposite() const;
-
-    // Swizzling methods (optional)
+    // Swizzling methods
     vec4 xyzw() const;
     vec4 xyz() const;
     vec4 xy() const;
