@@ -1,4 +1,3 @@
-#include <complex>
 #include <string>
 #include <vector>
 #include <cmath>
@@ -258,43 +257,42 @@ int Triangle_ClipAgainstPlane(vec4 plane_p, vec4 plane_n, triangle& in_tri, tria
     return -1;
 }
 
-// Fonction pour dessiner un triangle avec le Depth Buffer
 void DrawTriangleDepthBuffer(SDL_Renderer* renderer, triangle& triProjected, std::vector<float>& depthBuffer, int ScreenSizeX, int ScreenSizeY, int& numPixels)
 {
-    // Calcul des coordonnées barycentriques pour chaque pixel
-    // Trouver les bords du triangle (min et max en x et y)
+    // Calculation of barycentric coordinates for each pixel
+    // Find the edges of the triangle (min and max in x and y)
     int minX = std::max(0, static_cast<int>(std::min(triProjected.p[0].x, std::min(triProjected.p[1].x, triProjected.p[2].x))));
     int maxX = std::min(ScreenSizeX - 1, static_cast<int>(std::max(triProjected.p[0].x, std::max(triProjected.p[1].x, triProjected.p[2].x))));
     int minY = std::max(0, static_cast<int>(std::min(triProjected.p[0].y, std::min(triProjected.p[1].y, triProjected.p[2].y))));
     int maxY = std::min(ScreenSizeY - 1, static_cast<int>(std::max(triProjected.p[0].y, std::max(triProjected.p[1].y, triProjected.p[2].y))));
 
-    // Loop sur chaque pixel dans le rectangle englobant du triangle
+    // Loop on each pixel in the rectangle enclosing the triangle
     for (int y = minY; y <= maxY; ++y)
     {
         for (int x = minX; x <= maxX; ++x)
         {
-            // Calcul des coordonnées barycentriques
+            // Calculation of barycentric coordinates 
             float alpha = ((triProjected.p[1].y - triProjected.p[2].y) * (x - triProjected.p[2].x) + (triProjected.p[2].x - triProjected.p[1].x) * (y - triProjected.p[2].y)) /
                           ((triProjected.p[1].y - triProjected.p[2].y) * (triProjected.p[0].x - triProjected.p[2].x) + (triProjected.p[2].x - triProjected.p[1].x) * (triProjected.p[0].y - triProjected.p[2].y));
             float beta = ((triProjected.p[2].y - triProjected.p[0].y) * (x - triProjected.p[2].x) + (triProjected.p[0].x - triProjected.p[2].x) * (y - triProjected.p[2].y)) /
                          ((triProjected.p[1].y - triProjected.p[2].y) * (triProjected.p[0].x - triProjected.p[2].x) + (triProjected.p[2].x - triProjected.p[1].x) * (triProjected.p[0].y - triProjected.p[2].y));
             float gamma = 1.0f - alpha - beta;
 
-            // Si les coordonnées barycentriques sont valides (point à l'intérieur du triangle)
+            // If barycentric coordinates are valid (point inside the triangle) 
             if (alpha >= 0 && beta >= 0 && gamma >= 0)
             {
-                // Calcul de la profondeur du pixel (une interpolation des profondeurs des trois points)
+                // Calculation of pixel depth (an interpolation of the depths of the three points) 
                 float pixelDepth = alpha * triProjected.p[0].z + beta * triProjected.p[1].z + gamma * triProjected.p[2].z;
 
-                // Si ce pixel est plus proche de la caméra que ce qui est actuellement dans le Depth Buffer
+                // If this pixel is closer to the camera than what is currently in the Depth Buffer
                 int index = y * ScreenSizeX + x;
                 if (pixelDepth < depthBuffer[index])
                 {
-                    // Mise à jour du Depth Buffer
+                    // Update Depth Buffer
                     depthBuffer[index] = pixelDepth;
                     numPixels += 1;
                     
-                    // Dessiner le pixel (on peut appliquer une couleur ici)
+                    // Draw the pixel
                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  // Exemple : blanc
                     SDL_RenderDrawPoint(renderer, x, y);
                 }

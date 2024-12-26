@@ -226,7 +226,6 @@ int main()
                         triProjected.p[2].x *= 0.5f * ScreenSizeX;
                         triProjected.p[2].y *= 0.5f * ScreenSizeY;
                         
-                        // Dessine le triangle avec gestion du Depth Buffer
                         DrawTriangleDepthBuffer(renderer, triProjected, depthBuffer, ScreenSizeX, ScreenSizeY, numPixels);
                         numVerts += 1;
                     }         

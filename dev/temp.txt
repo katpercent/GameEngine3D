@@ -2,3 +2,10 @@ in build folder :
 cmake -S ../config -B .
 make
 ./main
+
+                    vec4 line1 = triProjected.p[1] - triProjected.p[0];
+                    vec4 line2 = triProjected.p[2] - triProjected.p[0];
+                    vec4 normal = line1.crossProduct(line2);
+                    normal.normalize();
+                    float diffuse = std::max(0.0f, normal.dot(lightDir));
+                    vec4 pixelColor = lightColor * diffuse;
