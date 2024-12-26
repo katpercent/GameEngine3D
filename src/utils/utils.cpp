@@ -1,3 +1,4 @@
+#include <complex>
 #include <string>
 #include <cmath>
 #include <limits.h>
@@ -47,43 +48,38 @@ double timeToRadians(double& time) {
     return fractionOfDay * 2 * M_PI;
 }
 
+vec4 normalise(vec4 vec) {
+    if (vec.magnitude() == 0) {
+        //throw std::invalid_argument("Cannot normalize a zero-length vector!");
+        return vec;
+        
+    }
+    return vec / vec.magnitude();
+}
+
 mat4 MatrixPointAt(vec4& pos, vec4& target, vec4& up)
 {
+    // Calculate new forward direction
+    vec4 forward = (target - pos).normalize();
 
-    /*[[newRightx, newUpx, newForwardx, 0.0]
-    [newRighty, newUpy, newForwardy, 0.0]
-    [newRightz, newUpz, newForwardz, 0.0]
-    [dp1, dp2, dp3, 0.0]]*/
+    // Calculate new up direction
+    vec4 a = forward * up.dot(forward);
+    vec4 newUp = (up - a).normalize();
 
-    vec4 newForward = target - pos;
-    newForward.normalize();
+    // New right direction
+    vec4 right = newUp.crossProduct(forward);
 
-    float r = up.dot(newForward);
-    vec4 a = newForward * r;
-    vec4 newUp = up - a;
-    newUp.normalize();
+    // Construct rotation matrix
+    mat4 cameraRot;
+    cameraRot.m[0][0] = right.x;   cameraRot.m[0][1] = right.y;   cameraRot.m[0][2] = right.z;   cameraRot.m[0][3] = -(pos.dot(right));;
+    cameraRot.m[1][0] = newUp.x;   cameraRot.m[1][1] = newUp.y;   cameraRot.m[1][2] = newUp.z;   cameraRot.m[1][3] = -(pos.dot(newUp));;
+    cameraRot.m[2][0] = forward.x; cameraRot.m[2][1] = forward.y; cameraRot.m[2][2] = forward.z; cameraRot.m[2][3] = -(pos.dot(forward));;
+    cameraRot.m[3][0] = 0.0f;      cameraRot.m[3][1] = 0.0f;      cameraRot.m[3][2] = 0.0f;      cameraRot.m[3][3] = 1.0f;
 
-    vec4 newRight = newUp.crossProduct(newForward);
 
-    mat4 matrix;
-    matrix.MatrixMakeIdentity();
-
-    matrix.m[0][0] = newRight.x;
-    matrix.m[0][1] = newRight.y;
-    matrix.m[0][2] = newRight.z;
-    matrix.m[0][3] = -(pos.dot(newRight));
-
-    matrix.m[1][0] = newUp.x;
-    matrix.m[1][1] = newUp.y;
-    matrix.m[1][2] = newUp.z;
-    matrix.m[1][3] = -(pos.dot(newUp));
-
-    matrix.m[2][0] = newForward.x;
-    matrix.m[2][1] = newForward.y;
-    matrix.m[2][2] = newForward.z;
-    matrix.m[2][3] = -(pos.dot(newForward));
-    return matrix;
-};    
+    // Combine rotation and translation to form view matrix
+    return cameraRot ;
+}
 
 mat4 MatrixTranslation(vec4& coordinates)
 {

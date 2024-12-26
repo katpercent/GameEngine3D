@@ -39,7 +39,8 @@ int main()
     
     float Velocity = 0.4;
     float VelocityCam = 0.2;
-    float FovRad = 1/tan(90.0f * 0.5f * (3.1415926535f / 180.0f));
+    float FovHorizontal = 1 / tan(90.0f * 0.5f * (PI / 180.0f));
+    float FovVertical = 1 / tan(90.0f * 0.5f * (PI / 180.0f));
     float Far = 1000.0f;
     float Near = 0.1f;
     float AspectRatio = static_cast<float>(ScreenSizeX) / static_cast<float>(ScreenSizeY);
@@ -54,8 +55,8 @@ int main()
     vec4 vFor(0.0, 0.0, 0.0);
 
     mat4 MatrixProjection;
-    MatrixProjection.m[0][0] = AspectRatio * FovRad;
-    MatrixProjection.m[1][1] = FovRad;
+    MatrixProjection.m[0][0] = FovHorizontal;
+    MatrixProjection.m[1][1] = FovVertical;
     MatrixProjection.m[2][2] = Far / (Far - Near);
     MatrixProjection.m[2][3] = (-Far * Near) / (Far - Near);
     MatrixProjection.m[3][2] = 1.0f;
