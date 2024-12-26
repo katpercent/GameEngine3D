@@ -79,7 +79,8 @@ int main()
     bool running = true;
     while (running)
     {
-        int numVert = 0;
+        int numVerts = 0;
+        int numPixels = 0;
         SDL_SetRenderDrawColor(renderer, 20, 40, 100, 255);
         SDL_RenderClear(renderer);
         SDL_Event event;
@@ -127,6 +128,8 @@ int main()
         vLookSi = matCameraRot * vTargetX;
         vTargetZ = vCamera + vLookFor;
         mat4 matView = MatrixPointAt(vCamera, vTargetZ, vUp);
+        // Création du depthBuffer avec des valeurs infinies
+        std::vector<float> depthBuffer(ScreenSizeX * ScreenSizeY, std::numeric_limits<float>::infinity());
         
         std::vector<triangle> vecTrianglesToSort;
         for (auto& mesh : meshes.meshes)
@@ -222,89 +225,15 @@ int main()
                         triProjected.p[1].y *= 0.5f * ScreenSizeY;
                         triProjected.p[2].x *= 0.5f * ScreenSizeX;
                         triProjected.p[2].y *= 0.5f * ScreenSizeY;
-
-                        for (int x = 0; x < 3; x++)
-                        {
-                            triProjected.col[x] = triViewed.col[x];
-                        }
-
-                        // Store triangle for sorting
-                        vecTrianglesToSort.push_back(triProjected);
-                    }
+                        
+                        // Dessine le triangle avec gestion du Depth Buffer
+                        DrawTriangleDepthBuffer(renderer, triProjected, depthBuffer, ScreenSizeX, ScreenSizeY, numPixels);
+                        numVerts += 1;
+                    }         
                 }
             }
         }
 
-
-        // Sort triangles from back to front
-        std::sort(vecTrianglesToSort.begin(), vecTrianglesToSort.end(), [](triangle& t1, triangle& t2)
-        {
-            float z1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
-            float z2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
-            return z1 > z2;
-        });
-
-        // Clip triangles against all four screen edges
-        for (auto& tri : vecTrianglesToSort) {
-            std::vector<triangle> clippedTriangles = { tri };
-            std::vector<triangle> trianglesToAdd;
-
-            for (int edge = 0; edge < 4; ++edge) {
-                trianglesToAdd.clear();
-                for (auto& t : clippedTriangles) {
-                    int nClippedTriangles;
-                    triangle clipped[2]; // To store up to 2 clipped triangles
-
-                    switch (edge) {
-                    case 0: // Clip against left edge
-                        nClippedTriangles = Triangle_ClipAgainstPlane(vec4(0.0f, 0.0f, 0.0f, 1.0f), vec4( 1.0f, 0.0f, 0.0f, 1.0f ), t, clipped[0], clipped[1]);
-                        break;
-                    case 1: // Clip against right edge
-                        nClippedTriangles = Triangle_ClipAgainstPlane(vec4( (float)(ScreenSizeX - 1), 0.0f, 0.0f, 1.0f), vec4( -1.0f, 0.0f, 0.0f, 1.0f), t, clipped[0], clipped[1]);
-                        break;
-                    case 2: // Clip against top edge
-                        nClippedTriangles = Triangle_ClipAgainstPlane(vec4( 0.0f, 0.0f, 0.0f, 1.0f), vec4( 0.0f, 1.0f, 0.0f, 1.0f), t, clipped[0], clipped[1]);
-                        break;
-                    case 3: // Clip against bottom edge
-                        nClippedTriangles = Triangle_ClipAgainstPlane(vec4( 0.0f, (float)(ScreenSizeY - 1), 0.0f, 1.0f), vec4( 0.0f, -1.0f, 0.0f, 1.0f), t, clipped[0], clipped[1]);
-                        break;
-                    }
-
-                    for (int i = 0; i < nClippedTriangles; ++i) {
-                        trianglesToAdd.push_back(clipped[i]);
-                    }
-                }
-                clippedTriangles = trianglesToAdd;
-            }
-        } 
-
-        for (auto& triProjected : vecTrianglesToSort)
-        {
-            const std::vector<SDL_Vertex> verts =
-            {
-                { SDL_FPoint{ triProjected.p[0].x, triProjected.p[0].y }, \
-                  SDL_Color{static_cast<Uint8>(triProjected.col[0].x),
-                            static_cast<Uint8>(triProjected.col[0].x),
-                            static_cast<Uint8>(triProjected.col[0].z),
-                            static_cast<Uint8>(triProjected.col[0].w) }, SDL_FPoint{0} },
-                { SDL_FPoint{ triProjected.p[1].x, triProjected.p[1].y }, 
-                  SDL_Color{static_cast<Uint8>(triProjected.col[1].x),
-                            static_cast<Uint8>(triProjected.col[1].x),
-                            static_cast<Uint8>(triProjected.col[1].z),
-                            static_cast<Uint8>(triProjected.col[1].w) }, SDL_FPoint{0} },
-                { SDL_FPoint{ triProjected.p[2].x, triProjected.p[2].y }, 
-                  SDL_Color{static_cast<Uint8>(triProjected.col[2].x),
-                            static_cast<Uint8>(triProjected.col[2].x),
-                            static_cast<Uint8>(triProjected.col[2].z),
-                            static_cast<Uint8>(triProjected.col[2].w) }, SDL_FPoint{0} },
-            };
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_RenderDrawLine(renderer, triProjected.p[0].x, triProjected.p[0].y, triProjected.p[1].x, triProjected.p[1].y);
-            SDL_RenderDrawLine(renderer, triProjected.p[1].x, triProjected.p[1].y, triProjected.p[2].x, triProjected.p[2].y);
-            SDL_RenderDrawLine(renderer, triProjected.p[2].x, triProjected.p[2].y, triProjected.p[0].x, triProjected.p[0].y);
-            SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
-            numVert += 1;
-        }
 
         // FPS calculation
         frameCount++;
@@ -315,7 +244,9 @@ int main()
             frameCount = 0;
             startTime = frameEnd;
             // Info in the title of the window
-            std::string title = "GameEngine {Info : {FPS: " + std::to_string(fps) + ", Number of Triangles: " + std::to_string(numVert) + "}}";
+            std::string title = "GameEngine {Info : {FPS: " + std::to_string(fps) + \
+                                ", Number of Triangles: " + std::to_string(numVerts) + \
+                                ", Number of Pixels: " + std::to_string(numPixels) +"}}";
             SDL_SetWindowTitle(win, title.c_str());
         }
 

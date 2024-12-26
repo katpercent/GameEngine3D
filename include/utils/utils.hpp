@@ -1,6 +1,7 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+#include <vector>
 #include <string>
 #include "../core/vec4.hpp"
 #include "../core/Triangle.hpp"
@@ -17,6 +18,7 @@ mat4 MatrixRotationX(float&);
 mat4 MatrixRotationY(float&);
 mat4 MatrixRotationZ(float&);
 vec4 Vector_IntersectPlane(vec4&, vec4&, vec4&, vec4&, float&);
+void DrawTriangleDepthBuffer(SDL_Renderer*, triangle&, std::vector<float>&, int, int, int&);
 int Triangle_ClipAgainstPlane(vec4, vec4, triangle&, triangle&, triangle&);
 
 #endif
