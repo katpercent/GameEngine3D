@@ -1,3 +1,0 @@
-/home/kat/Developer/Public/GameEngine3D/build/CMakeFiles/main.dir
-/home/kat/Developer/Public/GameEngine3D/build/CMakeFiles/edit_cache.dir
-/home/kat/Developer/Public/GameEngine3D/build/CMakeFiles/rebuild_cache.dir
