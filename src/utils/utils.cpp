@@ -2,10 +2,11 @@
 #include <vector>
 #include <cmath>
 #include <limits.h>
+#include <algorithm>
 #include "../../include/core/vec4.hpp"
-#include "../../include/core/mat4.hpp"
 #include "../../include/core/Triangle.hpp"
 #include "../../include/utils/utils.hpp"
+#include "../../include/core/Camera.hpp"
 
 #ifdef _WIN30
     #include <direct.h>
@@ -24,28 +25,8 @@ std::string getCurrentDirectory() {
     }
 }
 
-int maxValue(int a, int b) {
-    if (a > b)
-        return a;
-    else return b;
-};
-
-int minValue(int a, int b) {
-    if (a > b)
-        return b;
-    else return a;
-};
-
 double degreesToRadians(double degrees) {
     return degrees * (M_PI / 180.0);
-}
-
-// Convert time (in hours) to radians representing the sun's position
-double timeToRadians(double& time) {
-    // Convert time to fraction of a day (0 to 1)
-    double fractionOfDay = fmod(time / 24.0, 1.0);
-    // Convert fraction of a day to radians (0 to 2π)
-    return fractionOfDay * 2 * M_PI;
 }
 
 vec4 normalise(vec4 vec) {
@@ -56,79 +37,6 @@ vec4 normalise(vec4 vec) {
     }
     return vec / vec.magnitude();
 }
-
-mat4 MatrixPointAt(vec4& pos, vec4& target, vec4& up)
-{
-    // Calculate new forward direction
-    vec4 forward = (target - pos).normalize();
-
-    // Calculate new up direction
-    vec4 a = forward * up.dot(forward);
-    vec4 newUp = (up - a).normalize();
-
-    // New right direction
-    vec4 right = newUp.crossProduct(forward);
-
-    // Construct rotation matrix
-    mat4 cameraRot;
-    cameraRot.m[0][0] = right.x;   cameraRot.m[0][1] = right.y;   cameraRot.m[0][2] = right.z;   cameraRot.m[0][3] = -(pos.dot(right));;
-    cameraRot.m[1][0] = newUp.x;   cameraRot.m[1][1] = newUp.y;   cameraRot.m[1][2] = newUp.z;   cameraRot.m[1][3] = -(pos.dot(newUp));;
-    cameraRot.m[2][0] = forward.x; cameraRot.m[2][1] = forward.y; cameraRot.m[2][2] = forward.z; cameraRot.m[2][3] = -(pos.dot(forward));;
-    cameraRot.m[3][0] = 0.0f;      cameraRot.m[3][1] = 0.0f;      cameraRot.m[3][2] = 0.0f;      cameraRot.m[3][3] = 1.0f;
-
-
-    // Combine rotation and translation to form view matrix
-    return cameraRot ;
-}
-
-mat4 MatrixTranslation(vec4& coordinates)
-{
-    mat4 matrix;
-    matrix.m[0][3] = coordinates.x;
-    matrix.m[1][3] = coordinates.y;
-    matrix.m[2][3] = coordinates.z;
-    matrix.m[0][0] = 1.0;
-    matrix.m[1][1] = 1.0;
-    matrix.m[2][2] = 1.0;
-    matrix.m[3][3] = 1.0;
-    return matrix;
-}
-
-mat4 MatrixRotationX(float& AngleRad)
-{
-    mat4 matrix;
-    matrix.m[0][0] = 1.0;
-    matrix.m[1][1] = cosf(AngleRad);
-    matrix.m[1][2] = -(sinf(AngleRad));
-    matrix.m[2][1] = sinf(AngleRad);
-    matrix.m[2][2] = cosf(AngleRad);
-    matrix.m[3][3] = 1.0;
-    return matrix;
-};
-
-mat4 MatrixRotationY(float& AngleRad)
-{
-    mat4 matrix;
-    matrix.m[0][0] = cosf(AngleRad);
-    matrix.m[0][2] = sinf(AngleRad);
-    matrix.m[2][0] = -(sinf(AngleRad));
-    matrix.m[1][1] = 1.0;
-    matrix.m[2][2] = cosf(AngleRad);
-    matrix.m[3][3] = 1.0;
-    return matrix;
-};
-
-mat4 MatrixRotationZ(float& AngleRad)
-{
-    mat4 matrix;
-    matrix.m[0][0] = cosf(AngleRad);
-    matrix.m[0][1] = -(sinf(AngleRad));
-    matrix.m[1][0] = sinf(AngleRad);
-    matrix.m[1][1] = cosf(AngleRad);
-    matrix.m[2][2] = 1.0;
-    matrix.m[3][3] = 1.0;
-    return matrix;
-};
 
 vec4 Vector_IntersectPlane(vec4& plane_p, vec4& plane_n, vec4& lineStart, vec4& lineEnd, float& t)
 {
@@ -257,9 +165,8 @@ int Triangle_ClipAgainstPlane(vec4 plane_p, vec4 plane_n, triangle& in_tri, tria
     return -1;
 }
 
-void DrawTriangleDepthBuffer(SDL_Renderer* renderer, triangle& triProjected, std::vector<float>& depthBuffer, int ScreenSizeX, int ScreenSizeY, int& numPixels)
+void DrawTriangleDepthBuffer(SDL_Renderer* renderer, triangle& triProjected, float* depthBuffer, int ScreenSizeX, int ScreenSizeY, int& numPixels)
 {
-    // Calculation of barycentric coordinates for each pixel
     // Find the edges of the triangle (min and max in x and y)
     int minX = std::max(0, static_cast<int>(std::min(triProjected.p[0].x, std::min(triProjected.p[1].x, triProjected.p[2].x))));
     int maxX = std::min(ScreenSizeX - 1, static_cast<int>(std::max(triProjected.p[0].x, std::max(triProjected.p[1].x, triProjected.p[2].x))));
@@ -295,6 +202,190 @@ void DrawTriangleDepthBuffer(SDL_Renderer* renderer, triangle& triProjected, std
                     // Draw the pixel
                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);  // Exemple : blanc
                     SDL_RenderDrawPoint(renderer, x, y);
+                }
+            }
+        }
+    }
+}
+
+
+void DrawTriangleDepthBufferPerformance(
+    SDL_Renderer* renderer,
+    triangle& triProjected,
+    triangle& triTransformed,
+    float* depthBuffer,
+    float* shadowMap,
+    int& ScreenSizeX,
+    int& ScreenSizeY,
+    int& numPixels,
+    Camera& camera,
+    Lighting& light,
+    unsigned int DEPTH_BUFFER_RES_X,
+    unsigned int DEPTH_BUFFER_RES_Y,
+    int& numShadow)
+{
+    const float scaleX = static_cast<float>(DEPTH_BUFFER_RES_X) / ScreenSizeX;
+    const float scaleY = static_cast<float>(DEPTH_BUFFER_RES_Y) / ScreenSizeY;
+
+    const int pixelWidth = static_cast<int>(std::ceil(1.0f / scaleX)); // Block width in screen space
+    const int pixelHeight = static_cast<int>(std::ceil(1.0f / scaleY)); // Block height in screen space
+
+    // Find the edges of the triangle (min and max in depth buffer space)
+    int minX = std::max(0, static_cast<int>(std::min(triProjected.p[0].x, std::min(triProjected.p[1].x, triProjected.p[2].x)) * scaleX));
+    int maxX = std::min(static_cast<int>(DEPTH_BUFFER_RES_X) - 1, static_cast<int>(std::max(triProjected.p[0].x, std::max(triProjected.p[1].x, triProjected.p[2].x)) * scaleX));
+    int minY = std::max(0, static_cast<int>(std::min(triProjected.p[0].y, std::min(triProjected.p[1].y, triProjected.p[2].y)) * scaleY));
+    int maxY = std::min(static_cast<int>(DEPTH_BUFFER_RES_Y) - 1, static_cast<int>(std::max(triProjected.p[0].y, std::max(triProjected.p[1].y, triProjected.p[2].y)) * scaleY));
+
+    // Loop over depth buffer pixels
+    for (int y = minY; y <= maxY; ++y)
+    {
+        for (int x = minX; x <= maxX; ++x)
+        {
+            // Map depth buffer pixel to screen space
+            float screenX = x / scaleX;
+            float screenY = y / scaleY;
+
+            // Calculate barycentric coordinates
+            float alpha = ((triProjected.p[1].y - triProjected.p[2].y) * (screenX - triProjected.p[2].x) +
+                           (triProjected.p[2].x - triProjected.p[1].x) * (screenY - triProjected.p[2].y)) /
+                          ((triProjected.p[1].y - triProjected.p[2].y) * (triProjected.p[0].x - triProjected.p[2].x) +
+                           (triProjected.p[2].x - triProjected.p[1].x) * (triProjected.p[0].y - triProjected.p[2].y));
+            float beta = ((triProjected.p[2].y - triProjected.p[0].y) * (screenX - triProjected.p[2].x) +
+                          (triProjected.p[0].x - triProjected.p[2].x) * (screenY - triProjected.p[2].y)) /
+                         ((triProjected.p[1].y - triProjected.p[2].y) * (triProjected.p[0].x - triProjected.p[2].x) +
+                          (triProjected.p[2].x - triProjected.p[1].x) * (triProjected.p[0].y - triProjected.p[2].y));
+            float gamma = 1.0f - alpha - beta;
+
+            // Check if the pixel is inside the triangle
+            if (alpha >= 0 && beta >= 0 && gamma >= 0)
+            {
+                // Interpolate depth value
+                float pixelDepth = alpha * triProjected.p[0].z + beta * triProjected.p[1].z + gamma * triProjected.p[2].z;
+
+                // Calculate depth buffer index
+                int index = y * DEPTH_BUFFER_RES_X + x;
+
+                if (index < 0 || index >= DEPTH_BUFFER_RES_X * DEPTH_BUFFER_RES_Y) {
+                fprintf(stderr, "Index out of bounds: %d\n", index);
+                continue; // Skip this iteration
+                }
+
+
+                // Update depth buffer if the pixel is closer
+                if (pixelDepth < depthBuffer[index])
+                {
+                    depthBuffer[index] = pixelDepth;
+                    numPixels++;
+
+                    vec4 point = triProjected.p[0] * alpha + triProjected.p[1] * beta + triProjected.p[2] * gamma;
+                    
+                    // Transform the pixel position to light space
+                    vec4 lightSpacePos = light.computeSpaceMatrix() * point;
+                    lightSpacePos = lightSpacePos / lightSpacePos.w; // Perspective divide
+
+                    
+                    // Convert to shadow map coordinates
+                    int shadowMapX = static_cast<int>((lightSpacePos.x + 1.0f) * 0.5f * DEPTH_BUFFER_RES_X);
+                    int shadowMapY = static_cast<int>((lightSpacePos.y + 1.0f) * 0.5f * DEPTH_BUFFER_RES_Y);
+                        
+                    // Check if the coordinates are within the bounds of the shadow map
+                    bool isInShadow = false;
+                    if (shadowMapX >= 0 && shadowMapX < DEPTH_BUFFER_RES_X && shadowMapY >= 0 && shadowMapY < DEPTH_BUFFER_RES_Y) {
+                        // Get the depth value from the shadow map
+                        float shadowMapDepth = shadowMap[shadowMapY * DEPTH_BUFFER_RES_X + shadowMapX];
+
+                        // Add a small bias to the shadow map depth to avoid shadow acne
+                        const float shadowBias = 0.001f; // Adjust this value as needed
+                        if (pixelDepth > shadowMapDepth + shadowBias) {
+                            isInShadow = true; // The pixel is in shadow
+                        }   
+                    }
+                    vec4 PixelColor = vec4(255);
+                    if (isInShadow) {
+                        PixelColor = PixelColor * 0.0f; // Darken the color if in shadow
+                        numShadow++;
+                    }
+
+                    // Render rectangle to cover the corresponding screen area
+                    SDL_Rect rect = {
+                        static_cast<int>(x / scaleX), // Top-left X
+                        static_cast<int>(y / scaleY), // Top-left Y
+                        pixelWidth,                   // Width
+                        pixelHeight                   // Height
+                    };
+                    
+                    SDL_SetRenderDrawColor(renderer, PixelColor.x, PixelColor.y, PixelColor.z, 255);
+                    SDL_RenderFillRect(renderer, &rect);
+                }
+            }
+        }
+    }
+}
+
+void ShadowMap(
+    triangle& tri,
+    float* shadowMap,
+    int& ScreenSizeX,
+    int& ScreenSizeY,
+    unsigned int DEPTH_BUFFER_RES_X,
+    unsigned int DEPTH_BUFFER_RES_Y,
+    int& numPixels,
+    int& numShadow)
+{
+    
+
+    const float scaleX = static_cast<float>(DEPTH_BUFFER_RES_X) / ScreenSizeX;
+    const float scaleY = static_cast<float>(DEPTH_BUFFER_RES_Y) / ScreenSizeY;
+
+    const int pixelWidth = static_cast<int>(std::ceil(1.0f / scaleX)); // Block width in screen space
+    const int pixelHeight = static_cast<int>(std::ceil(1.0f / scaleY)); // Block height in screen space
+
+    // Find the edges of the triangle (min and max in depth buffer space)
+    int minX = std::max(0, static_cast<int>(std::min(tri.p[0].x, std::min(tri.p[1].x, tri.p[2].x)) * scaleX));
+    int maxX = std::min(static_cast<int>(DEPTH_BUFFER_RES_X) - 1, static_cast<int>(std::max(tri.p[0].x, std::max(tri.p[1].x, tri.p[2].x)) * scaleX));
+    int minY = std::max(0, static_cast<int>(std::min(tri.p[0].y, std::min(tri.p[1].y, tri.p[2].y)) * scaleY));
+    int maxY = std::min(static_cast<int>(DEPTH_BUFFER_RES_Y) - 1, static_cast<int>(std::max(tri.p[0].y, std::max(tri.p[1].y, tri.p[2].y)) * scaleY));
+    
+    // Loop over depth buffer pixels
+    for (int y = minY; y <= maxY; ++y)
+    {
+        for (int x = minX; x <= maxX; ++x)
+        {
+            // Map depth buffer pixel to screen space
+            float screenX = x / scaleX;
+            float screenY = y / scaleY;
+
+            // Calculate barycentric coordinates
+            float alpha = ((tri.p[1].y - tri.p[2].y) * (screenX - tri.p[2].x) +
+                           (tri.p[2].x - tri.p[1].x) * (screenY - tri.p[2].y)) /
+                          ((tri.p[1].y - tri.p[2].y) * (tri.p[0].x - tri.p[2].x) +
+                           (tri.p[2].x - tri.p[1].x) * (tri.p[0].y - tri.p[2].y));
+            float beta = ((tri.p[2].y - tri.p[0].y) * (screenX - tri.p[2].x) +
+                          (tri.p[0].x - tri.p[2].x) * (screenY - tri.p[2].y)) /
+                         ((tri.p[1].y - tri.p[2].y) * (tri.p[0].x - tri.p[2].x) +
+                          (tri.p[2].x - tri.p[1].x) * (tri.p[0].y - tri.p[2].y));
+            float gamma = 1.0f - alpha - beta;
+
+            // Check if the pixel is inside the triangle
+            if (alpha >= 0 && beta >= 0 && gamma >= 0)
+            {
+                // Interpolate depth value
+                float pixelDepth = alpha * tri.p[0].z + beta * tri.p[1].z + gamma * tri.p[2].z;
+
+                // Calculate depth buffer index
+                int index = y * DEPTH_BUFFER_RES_X + x;
+
+                if (index < 0 || index >= DEPTH_BUFFER_RES_X * DEPTH_BUFFER_RES_Y) {
+                fprintf(stderr, "Index out of bounds: %d\n", index);
+                continue; // Skip this iteration
+                }
+
+
+                // Update depth buffer if the pixel is closer
+                if (pixelDepth < shadowMap[index])
+                {
+                    numPixels++;
+                    shadowMap[index] = pixelDepth;
                 }
             }
         }

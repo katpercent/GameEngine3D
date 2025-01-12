@@ -16,9 +16,9 @@ void Mesh::Scale(float scaleFactor) {
 
 // Setter for id
 void Mesh::ChangePos(float x, float y, float z) {
-    coo.x = x;
-    coo.y = y;
-    coo.z = z;
+    position.x = x;
+    position.y = y;
+    position.z = z;
 }
 
 // Setter for name

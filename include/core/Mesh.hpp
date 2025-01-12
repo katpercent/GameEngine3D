@@ -11,8 +11,8 @@ class Mesh {
 public:
 	std::string path;
     std::vector<triangle> tris;
-    vec4 coo;
-    vec4 rot;
+    vec4 position;
+    vec4 rotation;
 
     bool LoadFromObjectFile(const std::string& sFilename);
 	void Scale(float scaleFactor);

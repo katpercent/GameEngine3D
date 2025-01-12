@@ -129,6 +129,78 @@ main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
+home/kat/Developer/Public/GameEngine3D/src/core/Camera.o: home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.o
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Camera.o
+
+# target to build an object file
+home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.o
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.o
+
+home/kat/Developer/Public/GameEngine3D/src/core/Camera.i: home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.i
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Camera.i
+
+# target to preprocess a source file
+home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.i
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.i
+
+home/kat/Developer/Public/GameEngine3D/src/core/Camera.s: home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.s
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Camera.s
+
+# target to generate assembly for a file
+home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.s
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Camera.cpp.s
+
+home/kat/Developer/Public/GameEngine3D/src/core/Lighting.o: home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.o
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Lighting.o
+
+# target to build an object file
+home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.o
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.o
+
+home/kat/Developer/Public/GameEngine3D/src/core/Lighting.i: home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.i
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Lighting.i
+
+# target to preprocess a source file
+home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.i
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.i
+
+home/kat/Developer/Public/GameEngine3D/src/core/Lighting.s: home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.s
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Lighting.s
+
+# target to generate assembly for a file
+home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.s
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/Lighting.cpp.s
+
+home/kat/Developer/Public/GameEngine3D/src/core/World.o: home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.o
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/World.o
+
+# target to build an object file
+home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.o
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.o
+
+home/kat/Developer/Public/GameEngine3D/src/core/World.i: home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.i
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/World.i
+
+# target to preprocess a source file
+home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.i
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.i
+
+home/kat/Developer/Public/GameEngine3D/src/core/World.s: home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.s
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/World.s
+
+# target to generate assembly for a file
+home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.s
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/World.cpp.s
+
 home/kat/Developer/Public/GameEngine3D/src/core/mat4.o: home/kat/Developer/Public/GameEngine3D/src/core/mat4.cpp.o
 .PHONY : home/kat/Developer/Public/GameEngine3D/src/core/mat4.o
 
@@ -177,30 +249,6 @@ home/kat/Developer/Public/GameEngine3D/src/core/mesh.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/mesh.cpp.s
 .PHONY : home/kat/Developer/Public/GameEngine3D/src/core/mesh.cpp.s
 
-home/kat/Developer/Public/GameEngine3D/src/core/meshes.o: home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.o
-.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/meshes.o
-
-# target to build an object file
-home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.o
-.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.o
-
-home/kat/Developer/Public/GameEngine3D/src/core/meshes.i: home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.i
-.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/meshes.i
-
-# target to preprocess a source file
-home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.i
-.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.i
-
-home/kat/Developer/Public/GameEngine3D/src/core/meshes.s: home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.s
-.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/meshes.s
-
-# target to generate assembly for a file
-home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.s
-.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/meshes.cpp.s
-
 home/kat/Developer/Public/GameEngine3D/src/core/triangle.o: home/kat/Developer/Public/GameEngine3D/src/core/triangle.cpp.o
 .PHONY : home/kat/Developer/Public/GameEngine3D/src/core/triangle.o
 
@@ -224,6 +272,54 @@ home/kat/Developer/Public/GameEngine3D/src/core/triangle.s: home/kat/Developer/P
 home/kat/Developer/Public/GameEngine3D/src/core/triangle.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/triangle.cpp.s
 .PHONY : home/kat/Developer/Public/GameEngine3D/src/core/triangle.cpp.s
+
+home/kat/Developer/Public/GameEngine3D/src/core/vec2.o: home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.o
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec2.o
+
+# target to build an object file
+home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.o
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.o
+
+home/kat/Developer/Public/GameEngine3D/src/core/vec2.i: home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.i
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec2.i
+
+# target to preprocess a source file
+home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.i
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.i
+
+home/kat/Developer/Public/GameEngine3D/src/core/vec2.s: home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.s
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec2.s
+
+# target to generate assembly for a file
+home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.s
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec2.cpp.s
+
+home/kat/Developer/Public/GameEngine3D/src/core/vec3.o: home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.o
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec3.o
+
+# target to build an object file
+home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.o
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.o
+
+home/kat/Developer/Public/GameEngine3D/src/core/vec3.i: home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.i
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec3.i
+
+# target to preprocess a source file
+home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.i
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.i
+
+home/kat/Developer/Public/GameEngine3D/src/core/vec3.s: home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.s
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec3.s
+
+# target to generate assembly for a file
+home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.s
+.PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec3.cpp.s
 
 home/kat/Developer/Public/GameEngine3D/src/core/vec4.o: home/kat/Developer/Public/GameEngine3D/src/core/vec4.cpp.o
 .PHONY : home/kat/Developer/Public/GameEngine3D/src/core/vec4.o
@@ -306,18 +402,30 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... main"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/Camera.o"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/Camera.i"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/Camera.s"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/Lighting.o"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/Lighting.i"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/Lighting.s"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/World.o"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/World.i"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/World.s"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/mat4.o"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/mat4.i"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/mat4.s"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/mesh.o"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/mesh.i"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/mesh.s"
-	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/meshes.o"
-	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/meshes.i"
-	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/meshes.s"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/triangle.o"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/triangle.i"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/triangle.s"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/vec2.o"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/vec2.i"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/vec2.s"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/vec3.o"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/vec3.i"
+	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/vec3.s"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/vec4.o"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/vec4.i"
 	@echo "... home/kat/Developer/Public/GameEngine3D/src/core/vec4.s"

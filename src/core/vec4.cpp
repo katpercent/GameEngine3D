@@ -1,11 +1,11 @@
 #include "../../include/core/vec4.hpp"
 #include <cmath>
-#include <stdexcept>
 
 // Default constructor
 vec4::vec4() : x(0.0), y(0.0), z(0.0), w(1.0) {}
 
 // Parameterized constructor
+vec4::vec4(float a) : x(a), y(a), z(a), w(1.0f) {} 
 vec4::vec4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 
 // Copy constructor
@@ -66,6 +66,17 @@ vec4 vec4::normalize() const {
         
     }
     return *this / mag;
+}
+
+vec4 vec4::reflect(const vec4& normal) const {
+    vec4 reflectVector;
+    float dotProduct = this->dot(normal);
+    if (std::abs(dotProduct) < 0.001f) {
+        reflectVector = -*this;
+    } else {
+        reflectVector = *this - 2.f * dotProduct * normal;
+    }
+    return reflectVector;
 }
 
 // Cross product (3D) - using the first three components of both vectors

@@ -1,29 +1,27 @@
-#ifndef VEC3_HPP
-#define VEC3_HPP
+#ifndef VEC2_HPP
+#define VEC2_HPP
 
-class vec3 {
+class vec2 {
 public:
     // Components
-    float x, y, w;
+    float x, y;
 
     // Default constructor
-    vec3();
+    vec2();
 
     // Constructor for x, y, z, w
-    vec3(float);
-    vec3(float x, float y, float w = 1.0f);
+    vec2(float);
+    vec2(float x, float y);
 
     // Copy constructor
-    vec3(const vec3& other);
+    vec2(const vec2& other);
 
     // Copy assignment operator
-    vec3& operator=(const vec3& other) {
+    vec2& operator=(const vec2& other) {
         if (this == &other) return *this;
         x = other.x;
         y = other.y;
-        w = other.w;
         return *this;
     }
 };
-
 #endif

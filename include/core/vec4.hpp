@@ -12,6 +12,7 @@ public:
     vec4();
 
     // Constructor for x, y, z, w
+    vec4(float);
     vec4(float x, float y, float z, float w = 1.0f);
 
     // Copy constructor
@@ -37,6 +38,11 @@ public:
     bool operator==(const vec4& other) const;
     bool operator!=(const vec4& other) const;
     
+    // Friend function for scalar multiplication (float * vec4)
+    friend vec4 operator*(float scalar, const vec4& vec) {
+        return vec4(vec.x * scalar, vec.y * scalar, vec.z * scalar, vec.w * scalar);
+    }
+
     // linear interpolation between two vectors
     vec4 lerp(const vec4& other, float t) const;
 
@@ -45,6 +51,8 @@ public:
 
     // Magnitude (length) of the vector
     float magnitude() const;
+
+    vec4 reflect(const vec4&) const;
 
     // Normalize the vector
     vec4 normalize() const;
